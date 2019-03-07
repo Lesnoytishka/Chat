@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="test.ClientApp">
+   <children>
+      <BorderPane layoutX="195.0" layoutY="104.0" prefHeight="132.0" prefWidth="211.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <right>
+            <ListView prefHeight="340.0" prefWidth="140.0" BorderPane.alignment="CENTER" />
+         </right>
+         <top>
+            <MenuBar BorderPane.alignment="CENTER">
+              <menus>
+                <Menu mnemonicParsing="false" text="Window">
+                     <items>
+                        <MenuItem mnemonicParsing="false" text="disconnect" />
+                     </items>
+                </Menu>
+                <Menu mnemonicParsing="false" text="Edit">
+                  <items>
+                    <MenuItem mnemonicParsing="false" text="Clear ChatLog" />
+                  </items>
+                </Menu>
+                <Menu mnemonicParsing="false" text="Help">
+                  <items>
+                    <MenuItem mnemonicParsing="false" text="About" />
+                    <MenuItem mnemonicParsing="false" text="myau" />
+                  </items>
+                </Menu>
+              </menus>
+            </MenuBar>
+         </top>
+         <center>
+            <TextArea id="taChatArea" fx:id="taChatArea" prefHeight="200.0" prefWidth="200.0" wrapText="true" BorderPane.alignment="CENTER" />
+         </center>
+         <bottom>
+            <BorderPane prefHeight="35.0" prefWidth="600.0" BorderPane.alignment="CENTER">
+               <center>
+                  <TextField id="tfSendMsgContent" fx:id="tfSendMsgContent" onKeyPressed="#sendMessageKey" promptText="message" BorderPane.alignment="CENTER">
+                     <font>
+                        <Font size="13.0" />
+                     </font></TextField>
+               </center>
+               <right>
+                  <Button id="btnSendMsg" fx:id="btnSendMsg" mnemonicParsing="false" onAction="#sendMessage" text="Отправить" BorderPane.alignment="CENTER" />
+               </right>
+               <left>
+                  <TextField id="tfSendMsgToUser" fx:id="tfSendMsgToUser" prefHeight="25.0" prefWidth="113.0" promptText="To User" BorderPane.alignment="CENTER">
+                     <font>
+                        <Font size="13.0" />
+                     </font>
+                  </TextField>
+               </left>
+            </BorderPane>
+         </bottom>
+      </BorderPane>
+   </children>
+
+</AnchorPane>

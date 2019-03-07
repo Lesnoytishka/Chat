@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.PasswordField?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="250.0" prefWidth="359.0" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Client.AuthApplication">
+   <children>
+      <VBox alignment="CENTER" layoutX="180.0" layoutY="39.0" prefHeight="400.0" prefWidth="512.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <children>
+            <HBox alignment="CENTER" prefHeight="50.0" prefWidth="200.0">
+               <children>
+                  <Label text="Login" />
+                  <TextField fx:id="tfLogin" alignment="CENTER" promptText="login">
+                     <HBox.margin>
+                        <Insets left="25.0" />
+                     </HBox.margin></TextField>
+               </children>
+            </HBox>
+            <HBox alignment="CENTER" prefHeight="50.0" prefWidth="359.0" spacing="5.0">
+               <children>
+                  <Label text="Password" />
+                  <PasswordField fx:id="pfPassword" alignment="CENTER" promptText="password">
+                     <HBox.margin>
+                        <Insets />
+                     </HBox.margin>
+                  </PasswordField>
+               </children>
+            </HBox>
+            <Button fx:id="btnEnterInChat" lineSpacing="20.0" mnemonicParsing="false" onAction="#runClientApplication" prefHeight="38.0" prefWidth="140.0" text="Ввойти в чат" textAlignment="CENTER" textFill="#685008">
+               <font>
+                  <Font size="14.0" />
+               </font>
+               <VBox.margin>
+                  <Insets />
+               </VBox.margin></Button>
+            <HBox alignment="CENTER" prefHeight="50.0" prefWidth="200.0">
+               <children>
+                  <Button fx:id="btnRegistration" mnemonicParsing="false" onAction="#runRegistrationApplication" text="Регистрация">
+                     <HBox.margin>
+                        <Insets right="50.0" />
+                     </HBox.margin></Button>
+                  <CheckBox fx:id="checkBoxAnotherSetup" mnemonicParsing="false" onAction="#changeAnotherSetup" text="ввести сервер вручную" />
+               </children>
+            </HBox>
+            <HBox fx:id="hbAnotherSetup" alignment="CENTER" disable="true" prefHeight="50.0" prefWidth="200.0" spacing="5.0">
+               <children>
+                  <Label text="ip" />
+                  <TextField fx:id="tfIP" alignment="CENTER" promptText="ip address" text="localhost" />
+                  <Label text="port" />
+                  <TextField fx:id="tfPort" alignment="CENTER" promptText="port" text="8888" />
+               </children>
+            </HBox>
+         </children>
+      </VBox>
+   </children>
+</AnchorPane>
