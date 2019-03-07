@@ -14,10 +14,15 @@ public class ClientRegistrationApp extends Application {
 
     @FXML
     public TextField tfLogin;
+    @FXML
     public TextField tfNickName;
+    @FXML
     public TextField tfPassword;
+    @FXML
     public TextField tfConfirmPassword;
+    @FXML
     public Button btnCreateUser;
+    @FXML
     public Button btnCancel;
 
     private AuthClients auth = new AuthClients();

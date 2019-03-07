@@ -97,4 +97,9 @@ public class Client implements TCPConnectionListener {
     public void isException(TCPConnections connection, Exception ex) {
 
     }
+
+    @Override
+    public void changeName(TCPConnections connections, String oldNickName, String newNickNme) {
+
+    }
 }

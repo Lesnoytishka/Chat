@@ -20,7 +20,7 @@ public class Server implements TCPConnectionListener {
                 try {
                     TCPConnections realConnect = new TCPConnections(this, serverSocket.accept());
                     realConnections.add(realConnect);
-                    System.out.println("new connection is access " + realConnect);
+//                    System.out.println("new connection is access " + realConnect);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -31,7 +31,6 @@ public class Server implements TCPConnectionListener {
         } catch (IOException ex){
             ex.printStackTrace();
         }
-
     }
 
     private void sendMessageToAllConnections(String value){
@@ -59,21 +58,21 @@ public class Server implements TCPConnectionListener {
 
     }
 
-    private void sendSystemMessage(){
-        new Thread(() -> {
-            while (true) {
-                String message = scanner.nextLine();
-                if (message.equals("/real")) {
-                    System.out.println(realConnections);
-                } else if (message.equals("/active")) {
-                    System.out.println(activeConnections);
-                }
-                for (TCPConnections connections : realConnections) {
-                    connections.sendMessage(message);
-                }
-            }
-        }).start();
-    }
+//    private void sendSystemMessage(){
+//        new Thread(() -> {
+//            while (true) {
+//                String message = scanner.nextLine();
+//                if (message.equals("/real")) {
+//                    System.out.println(realConnections);
+//                } else if (message.equals("/active")) {
+//                    System.out.println(activeConnections);
+//                }
+//                for (TCPConnections connections : realConnections) {
+//                    connections.sendMessage(message);
+//                }
+//            }
+//        }).start();
+//    }
 
     @Override
     public void sendMessageFromTo(TCPConnections connection, String from, String toUser, String message) {
@@ -94,7 +93,7 @@ public class Server implements TCPConnectionListener {
     public void isConnectionOnline(TCPConnections connection) {
         activeConnections.put(connection.getNickName(), connection);
         System.out.println("Client is online: " + connection.toString());
-//        sendMessageToAllConnections("Client connected: " + connection.getNickName());
+        sendMessageToAllConnections("Client connected: " + connection.getNickName());
     }
 
     @Override
@@ -103,7 +102,7 @@ public class Server implements TCPConnectionListener {
 
             System.out.println("Client disconnected: " + connection);
             activeConnections.remove(connection.getNickName());
-//            sendMessageToAllConnections("Client disconnected: " + connection);
+            sendMessageToAllConnections("Client disconnected: " + connection);
 
         }
         realConnections.remove(connection);
@@ -114,4 +113,9 @@ public class Server implements TCPConnectionListener {
         System.out.println("TCP Connection exception: " + ex);
     }
 
+    @Override
+    public void changeName(TCPConnections connections, String oldNickName, String newNickName) {
+        activeConnections.put(newNickName, connections);
+        activeConnections.remove(oldNickName);
+    }
 }

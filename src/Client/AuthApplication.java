@@ -1,7 +1,7 @@
 package Client;
 
+import Network.AuthClients;
 import javafx.application.Application;
-import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -16,15 +16,23 @@ import javafx.stage.Stage;
 public class AuthApplication extends Application {
 
     private boolean editableSetupChat = false;
+    private AuthClients authSetup = new AuthClients();
 
     @FXML
     public TextField tfLogin;
+    @FXML
     public Button btnEnterInChat;
+    @FXML
     public Button btnRegistration;
+    @FXML
     public CheckBox checkBoxAnotherSetup;
+    @FXML
     public HBox hbAnotherSetup;
+    @FXML
     public TextField tfIP;
+    @FXML
     public TextField tfPort;
+    @FXML
     public PasswordField pfPassword;
 
     @Override
@@ -37,12 +45,15 @@ public class AuthApplication extends Application {
 
     @FXML
     public void runClientApplication() {
-        ClientApplication clientApp = new ClientApplication(tfLogin.getText(), tfIP.getText(), Integer.valueOf(tfPort.getText()));
-        Stage stage = new Stage();
-        clientApp.start(stage);
+        if (authSetup.authUser(tfLogin.getText(), pfPassword.getText())) {
 
-        final Stage stageAuth = (Stage) btnEnterInChat.getScene().getWindow();
-        stageAuth.close();
+            ClientApplication clientApp = new ClientApplication(authSetup.getNickName(), tfIP.getText(), Integer.valueOf(tfPort.getText()));
+            Stage stage = new Stage();
+            clientApp.start(stage);
+
+            final Stage stageAuth = (Stage) btnEnterInChat.getScene().getWindow();
+            stageAuth.close();
+        }
     }
 
     @FXML
@@ -64,7 +75,7 @@ public class AuthApplication extends Application {
     }
 
     @FXML
-    public void changeAnotherSetup(ActionEvent actionEvent) {
+    public void changeAnotherSetup() {
         if (editableSetupChat){
             hbAnotherSetup.setDisable(true);
             editableSetupChat = false;

@@ -42,7 +42,6 @@ public class TCPConnections {
                 while (!thrListener.isInterrupted()) {
 
                     String message = in.readUTF();
-                    sendMessage(message);
                     String[] messageHandler = patternsHandler.useMessageCommandPattern(message);
                     String messageType = messageHandler[0];
                     String messageContent = messageHandler[1];
@@ -95,7 +94,7 @@ public class TCPConnections {
 
     public synchronized void sendMessage (String value) {
         try {
-            out.writeUTF(value/* + "\r\n"*/);
+            out.writeUTF(value);
             out.flush();
         } catch (IOException e) {
             connectionListener.isException(TCPConnections.this, e);
@@ -116,7 +115,9 @@ public class TCPConnections {
 //    NickName operations
 
     private void setNickName(String nickName) {
+        String oldNickName = this.nickName;
         this.nickName = nickName;
+        connectionListener.changeName(TCPConnections.this, oldNickName, nickName);
     }
 
     public String getNickName() {
@@ -130,6 +131,8 @@ public class TCPConnections {
                 nickName, socket.getInetAddress(), socket.getPort()
         );
     }
+
+
 
     public Socket getSocket() {
         return socket;

@@ -12,7 +12,7 @@ public class PatternsAndFonts {
     }
 
     String[] useMessageCommandPattern(String message){
-        Pattern commandPattern = Pattern.compile("^(\\W\\w+) (.+)", Pattern.MULTILINE);
+        Pattern commandPattern = Pattern.compile("^(\\W\\w+)\\s(.+)", Pattern.MULTILINE);
 
         String[] returnedString = new String[2];
         Matcher matcher = commandPattern.matcher(message);

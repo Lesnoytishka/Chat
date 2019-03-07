@@ -14,4 +14,6 @@ public interface TCPConnectionListener {
 
     void isException(TCPConnections connection, Exception ex);
 
+    void changeName(TCPConnections connections, String oldNickName, String newNickNme);
+
 }

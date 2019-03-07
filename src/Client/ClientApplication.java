@@ -5,15 +5,14 @@ import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.geometry.Pos;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
-
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -27,7 +26,6 @@ public class ClientApplication extends Application {
     private String nickName;
     private String ip_address;
     private int port;
-    private boolean authorizationIsOK = false;
 
     private DataInputStream in;
     private DataOutputStream out;
@@ -38,13 +36,9 @@ public class ClientApplication extends Application {
     private ObservableList<String> nicksList = FXCollections.observableArrayList();
     private ListView<String> listView = new ListView<>(nicksList);
 
-    private Scene scene;
     private Stage stage;
 
     private Thread thrReceive;
-
-    private AuthClients authClients = new AuthClients();
-//    private PatternsAndFont patterns = new PatternsAndFont();
 
     public ClientApplication(String nickName, String ip_address, int port) {
         this.nickName = nickName;
@@ -61,123 +55,12 @@ public class ClientApplication extends Application {
         stage = primaryStage;
         primaryStage.setTitle("Чат.");
 
-        scene = setSceneComponent();
+        Scene scene = setSceneComponent();
 
         primaryStage.setScene(scene);
         primaryStage.setOnCloseRequest(event -> closeApp());
         primaryStage.show();
     }
-
-//    ------------------------------------------------------------------------------------------------------------------
-
-//    private Scene setAuthSceneComponent() {
-//
-//        Label labelWelcome = new Label();
-//            labelWelcome.setText("Добро пожаловать! Пожалуйста, авторизируйтесь");
-//
-//        Label labelLogin = new Label();
-//            labelLogin.setText("Логин");
-//
-//        Label labelPassword = new Label();
-//            labelPassword.setText("Пароль");
-//
-//        Label labelIpAddress = new Label();
-//            labelIpAddress.setText("IP_ADDRESS");
-//
-//        Label labelPort = new Label();
-//            labelPort.setText("Порт сервера");
-//
-//        TextField tfLogin = new TextField();
-//            tfLogin.setAlignment(Pos.CENTER);
-//
-//        TextField tfPassword = new TextField();
-//            tfPassword.setAlignment(Pos.CENTER);
-//
-//        TextField tfIpAddress = new TextField("localhost");
-//            tfIpAddress.setAlignment(Pos.CENTER);
-//            tfIpAddress.setEditable(false);
-//
-//        tfIpAddress.setDisable(true);
-//
-//        TextField tfPort = new TextField("8888");
-//            tfPort.setAlignment(Pos.CENTER);
-//            tfPort.setEditable(false);
-//
-//        tfPort.setDisable(true);
-//
-//        CheckBox cbAnotherSetup = new CheckBox();
-//           cbAnotherSetup.setDisable(true);
-//
-//        Button buttonCheck = new Button("Выбрать сервер вручную");
-//
-//
-//        buttonCheck.setOnAction(event -> {
-//            cbAnotherSetup.setSelected(!cbAnotherSetup.isSelected());
-//
-//            if (cbAnotherSetup.isSelected()) {
-//
-//                tfIpAddress.setEditable(true);
-//                tfPort.setEditable(true);
-//
-//                tfIpAddress.setDisable(false);
-//                tfPort.setDisable(false);
-//
-//                tfIpAddress.setText(ipAddress_temp);
-//                tfPort.setText(port_temp);
-//
-//            } else {
-//
-//                ipAddress_temp = tfIpAddress.getText();
-//                port_temp = tfPort.getText();
-//
-//                tfIpAddress.setEditable(false);
-//                tfPort.setEditable(false);
-//
-//                tfIpAddress.setDisable(true);
-//                tfPort.setDisable(true);
-//
-//                tfIpAddress.setText("localhost");
-//                tfPort.setText("8888");
-//
-//            }
-//        });
-//
-//        Button confirmCreateChat = new Button("Ввойти в чат");
-//
-//        confirmCreateChat.setOnAction( event -> {
-//
-//                nickName = tfLogin.getText().trim();
-//                String password = tfPassword.getText().trim();
-//                ip_address = tfIpAddress.getText().trim();
-//                port = Integer.valueOf(tfPort.getText().trim());
-//
-//                if (authClients.authUser(nickName, password)) {
-//                    scene = setSceneComponent();
-//                    stage.setScene(scene);
-//                    authorizationIsOK = true;
-//                    receiveMessage();
-//                }
-//
-//        });
-//
-//        HBox layoutCheck = new HBox(cbAnotherSetup, buttonCheck);
-//        layoutCheck.setAlignment(Pos.CENTER);
-//
-//        VBox layout = new VBox(10);
-//
-//        layout.setPrefSize(400,400);
-//
-//        layout.setAlignment(Pos.CENTER);
-//        layout.getChildren().addAll(
-//                labelWelcome, labelLogin, tfLogin, labelPassword, tfPassword,
-//                layoutCheck, labelIpAddress, tfIpAddress, labelPort, tfPort,
-//                confirmCreateChat
-//        );
-//
-//        return new Scene(layout);
-//    }
-
-//    ------------------------------------------------------------------------------------------------------------------
 
     private Scene setSceneComponent(){
         try {
@@ -196,7 +79,7 @@ public class ClientApplication extends Application {
         taChatLog.setWrapText(true);
         taChatLog.setEditable(false);
 
-        HBox bottomContent =setSendMessageComponents();
+        HBox bottomContent = setSendMessageComponents();
 
         MenuBar menu = setMenuBarComponent();
 
@@ -231,80 +114,117 @@ public class ClientApplication extends Application {
         Menu menu = new Menu("Меню чата");
         Menu help = new Menu("Help");
 
-        MenuItem clearChatArea = new MenuItem("Очистить лог чата");
-        MenuItem about = new MenuItem("обо мне");
-        MenuItem helpChat = new MenuItem("возможности чата");
+        MenuItem miClearChatArea = new MenuItem("Очистить лог чата");
+        MenuItem miChangeNickName = new MenuItem("Переименовать");
+        MenuItem miAbout = new MenuItem("обо мне");
+        MenuItem miHelpChat = new MenuItem("возможности чата");
 
-        menu.getItems().add(clearChatArea);
-        help.getItems().addAll(helpChat, about);
+        menu.getItems().addAll(miClearChatArea, miChangeNickName);
+        help.getItems().addAll(miHelpChat, miAbout);
 
-        clearChatArea.setOnAction(event -> taChatLog.clear());
+        miClearChatArea.setOnAction(event -> taChatLog.clear());
+
+
+        miChangeNickName.setOnAction(event -> {
+            RenamedWindow renamedWindow = new RenamedWindow(this, nickName);
+//            closeApp();
+
+
+
+//              todo реализовать изменение ника без дисконекта
+            stage.setTitle(String.format("Чат. [%s]", nickName));
+            try {
+                out.writeUTF("/setName " + nickName);
+                out.flush();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+
+        });
 
         return new MenuBar(menu, help);
     }
+
+
 
 //    ------------------------------------------------------------------------------------------------------------------
 
     private void sendMessage(){
         if (!tfSendMessage.getText().trim().isEmpty()) {
-            try {
-                String message = tfSendMessage.getText().trim();
-                tfSendMessage.setText("");
-                out.writeUTF(message);
-                out.flush();
-            } catch (IOException e) {
-                e.printStackTrace();
+            if (tfSendMessage.getText().startsWith("/w ")){
+                try {
+                    String message = tfSendMessage.getText().trim();
+                    tfSendMessage.setText("");
+                    out.writeUTF(message);
+                    out.flush();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            } else {
+                try {
+                    String message = tfSendMessage.getText().trim();
+                    tfSendMessage.setText("");
+                    out.writeUTF("/message " + message);
+                    out.flush();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
             }
         }
     }
 
     private synchronized void receiveMessage(){
         String timeLocal = LocalTime.now().toString().substring(0,5);
-        thrReceive = new Thread(() -> {
+        Platform.runLater(() -> {
+            thrReceive = new Thread(() -> {
+                try {
+                    while (true) {
+                        String message = in.readUTF();
+                        if (message.startsWith("/userList ")) {
 
-            try {
-                while (true) {
-                    String message = in.readUTF();
-                    if (message.startsWith("/userList ")) {
+                            Platform.runLater(() -> {
+                                String[] strings;
+                                strings = message.split(";");
+                                nicksList.removeAll(listView.getItems());
+                                nicksList.addAll(Arrays.asList(strings).subList(1, strings.length));
+                            });
 
-                        Platform.runLater(() -> {
-                            String[] strings;
-                            strings = message.split(";");
-                            nicksList.removeAll(listView.getItems());
-                            nicksList.addAll(Arrays.asList(strings).subList(1, strings.length));
-                        });
+                        } else if (message.startsWith("/exit ")) {
 
-                    } else if (message.startsWith("/exit ")) {
+                                String[] userSplitName;
+                                userSplitName = message.split(";");
+                                taChatLog.appendText(timeLocal + " Участник покинул чат: " + userSplitName[1]);
 
-                            String[] strings;
-                            strings = message.split(";");
-                            taChatLog.appendText(timeLocal + " Участник покинул чат: " + strings[1]);
+                        } else {
 
-                    } else {
+                            taChatLog.appendText(timeLocal + " " + message + "\n");
 
-                        taChatLog.appendText(timeLocal + " " + message + "\n");
-
+                        }
                     }
+                } catch (IOException ex) {
+                    System.err.println("Потеряно соединение с сервером\n");
+                    taChatLog.appendText("Потеряно соединение с сервером\n");
+                    closeApp();
                 }
-            } catch (IOException ex) {
-                System.err.println("Потеряно соединение с сервером\n");
-                taChatLog.appendText("Потеряно соединение с сервером\n");
-                closeApp();
-            }
+            });
+            thrReceive.start();
         });
-        thrReceive.start();
+    }
+
+    void setNickName(String nickName) {
+        this.nickName = nickName;
     }
 
     private void closeApp() {
-        if (authorizationIsOK) {
-            try {
-                thrReceive.interrupt();
-                socket.close();
+        stage.close();
+        try {
+            socket.close();
 
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+
     }
 
 }

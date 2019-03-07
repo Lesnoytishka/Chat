@@ -1,5 +1,7 @@
 package Network;
 
+//todo избавиться от данного класса и обращаться напрямую к БД?
+
 public class User {
 
     private int id;

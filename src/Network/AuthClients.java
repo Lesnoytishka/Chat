@@ -7,6 +7,7 @@ import java.util.Map;
 public class AuthClients {
 
     private Map<Integer, User> users = new HashMap<>();
+    private String nickName;
 
     public AuthClients(){
 
@@ -52,10 +53,6 @@ public class AuthClients {
         }
     }
 
-    public String getUsersNickName(){
-        return "";
-    }
-
     public boolean addUserInDB(String login, String password, String nickName){
         try {
             Class.forName("org.sqlite.JDBC");
@@ -72,7 +69,6 @@ public class AuthClients {
                     ResultSet resultSet = statement.executeQuery("select * from users where login = '" + login + "'");
                     int id = resultSet.getInt("id");
                     users.put(id, new User(id, login, password, nickName));
-                    System.out.println(users);
                     return true;
                 }
                 return false;
@@ -108,8 +104,36 @@ public class AuthClients {
         return false;
     }
 
-//    public boolean authUser(String username, String password) {
-//        String pass = users.get();
-//        return pass != null && pass.equals(password);
-//    }
+    public boolean authUser(String login, String password) {
+        String pass = null;
+        for (Map.Entry entry : users.entrySet()) {
+            User user = (User) entry.getValue();
+            if (login.equals(user.getLogin())) {
+                pass = ((User) entry.getValue()).getPassword();
+                nickName = ((User) entry.getValue()).getNickName();
+            }
+        }
+        return pass != null && pass.equals(password);
+    }
+
+    public String getNickName() {
+        return nickName;
+    }
+
+    public boolean changeNickName(String oldNickName, String newNickName){
+        try {
+            Class.forName("org.sqlite.JDBC");
+            try (Connection connection = DriverManager.getConnection("jdbc:sqlite:src\\UsersAuth.db")) {
+                Statement statement = connection.createStatement();
+                ResultSet resultSet = statement.executeQuery("select * from users where nickname = '" + oldNickName + "'");
+                int id = resultSet.getInt("id");
+                statement.executeUpdate("update users set nickname = '" + newNickName + "' where id = '" + id + "'");
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
 }
