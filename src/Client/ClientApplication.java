@@ -1,24 +1,24 @@
 package Client;
 
-import Network.AuthClients;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.KeyCode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
-import java.io.IOException;
+
+import java.io.*;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
 
 public class ClientApplication extends Application {
 
@@ -40,6 +40,8 @@ public class ClientApplication extends Application {
 
     private Thread thrReceive;
 
+    private File messageHistory;
+
     public ClientApplication(String nickName, String ip_address, int port) {
         this.nickName = nickName;
         this.ip_address = ip_address;
@@ -52,6 +54,7 @@ public class ClientApplication extends Application {
 
     @Override
     public void start(Stage primaryStage) {
+
         stage = primaryStage;
         primaryStage.setTitle("Чат.");
 
@@ -60,6 +63,74 @@ public class ClientApplication extends Application {
         primaryStage.setScene(scene);
         primaryStage.setOnCloseRequest(event -> closeApp());
         primaryStage.show();
+
+        historyActivation();
+    }
+
+    private void historyActivation(){
+        String historyPath = "History\\";
+        File historyPath_dir = new File(historyPath);
+        messageHistory = new File(historyPath + "history_" + nickName + ".txt");
+
+        if (!historyPath_dir.exists()){
+            historyPath_dir.mkdir();
+        }
+
+        if (!messageHistory.exists()){
+            try {
+                messageHistory.createNewFile();
+            } catch (IOException e) {
+                taChatLog.appendText("Не удалось подключится к файлу-архиву сообщений! " +
+                        "\nПопробуйте запустить чат от имени администратора. " +
+                        "\nВ случае повторения ошибки ... вините программистов\n");
+            }
+        }
+
+        List<String> messaged = getListMessage();
+        for(String str : messaged){
+            taChatLog.appendText(str + "\n");
+        }
+        taChatLog.appendText("\n");
+
+    }
+
+    private List<String> getListMessage(){
+        List<String> history = new ArrayList<>();
+        try {
+            RandomAccessFile raf = new RandomAccessFile(messageHistory, "r");
+            int historyLength = 100;
+            int count = 0;
+            int historyHaveLength = 0;
+
+            long pointer = messageHistory.length() - 1;
+
+            for (int i = 0; pointer >= 0 && i < historyLength; pointer--){
+                raf.seek(pointer);
+                int chr = raf.read();
+                if (chr == '\n'){
+                    i++;
+                    historyHaveLength++;
+                }
+            }
+
+            pointer++;
+
+            while (count < historyHaveLength) {
+
+                raf.seek(pointer);
+
+                String line = new String(raf.readLine().getBytes(StandardCharsets.ISO_8859_1), StandardCharsets.UTF_8);
+                taChatLog.appendText(line + "\n");
+                pointer = raf.getFilePointer();
+                count++;
+            }
+
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        Collections.reverse(history);
+        return history;
     }
 
     private Scene setSceneComponent(){
@@ -198,12 +269,22 @@ public class ClientApplication extends Application {
 
                         } else {
 
-                            taChatLog.appendText(timeLocal + " " + message + "\n");
+                            String messageContent = timeLocal + " " + message + "\n";
+                            taChatLog.appendText(messageContent);
+
+
+                            byte[] messageContentBytes = messageContent.getBytes();
+                            try (FileOutputStream writeHistory = new FileOutputStream(messageHistory, true)) {
+                                writeHistory.write(messageContentBytes);
+                                writeHistory.flush();
+                            } catch (IOException ex){
+                                ex.printStackTrace();
+                            }
+
 
                         }
                     }
                 } catch (IOException ex) {
-                    System.err.println("Потеряно соединение с сервером\n");
                     taChatLog.appendText("Потеряно соединение с сервером\n");
                     closeApp();
                 }
@@ -217,10 +298,8 @@ public class ClientApplication extends Application {
     }
 
     private void closeApp() {
-        stage.close();
         try {
             socket.close();
-
         } catch (IOException e) {
             e.printStackTrace();
         }

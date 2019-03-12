@@ -32,22 +32,6 @@ public class AuthClients {
                 }
             }
 
-//            FileReader userArrayReader = new FileReader("src\\Server\\UserArray.txt");
-//            Scanner scanner_userReader = new Scanner(userArrayReader);
-//
-//            while (scanner_userReader.hasNext()) {
-//                String user = scanner_userReader.nextLine();
-//                Pattern pattern = Pattern.compile(":");
-//                String[] user_logAndPass = pattern.split(user);
-//                String login = user_logAndPass[0];
-//                String password = user_logAndPass[1];
-//
-//                users.put(login, password);
-//            }
-//
-//            scanner_userReader.close();
-//            userArrayReader.close();
-
         } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
         }
