@@ -4,6 +4,7 @@ import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.net.Socket;
+import java.util.concurrent.ExecutorService;
 
 public class TCPConnections {
 
@@ -15,31 +16,32 @@ public class TCPConnections {
     private DataInputStream in;
     private DataOutputStream out;
 
-    private Thread thrListener;
+    private ExecutorService executorService;
 
     private PatternsAndFonts patternsHandler = new PatternsAndFonts();
 
 //todo удалить никнейм из конструктора и дать возможность клиенту подключиться (войти в онлайн)
-    public TCPConnections (TCPConnectionListener eventListener, String ipAddress, int port) throws IOException{
-        this(eventListener, new Socket(ipAddress, port));
+    public TCPConnections (TCPConnectionListener eventListener, String ipAddress, int port, ExecutorService executorService) throws IOException{
+        this(eventListener, new Socket(ipAddress, port), executorService);
     }
 
-    public TCPConnections(TCPConnectionListener connectionListener, Socket socket) throws IOException {
+    public TCPConnections(TCPConnectionListener connectionListener, Socket socket, ExecutorService executorService) throws IOException {
+        this.executorService = executorService;
         this.connectionListener = connectionListener;
         this.socket = socket;
         in = new DataInputStream(socket.getInputStream());
         out = new DataOutputStream(socket.getOutputStream());
-        runThreadListner();
+        runThreadListener();
     }
 
-    private void runThreadListner() {
-        thrListener = new Thread( () -> {
+    private void runThreadListener() {
+        executorService.execute(() -> {
             try {
                 TCPConnections thisConnect = TCPConnections.this;
 
                 connectionListener.isConnectionReady(TCPConnections.this);
 
-                while (!thrListener.isInterrupted()) {
+                while (!Thread.currentThread().isInterrupted()) {
 
                     String message = in.readUTF();
                     String[] messageHandler = patternsHandler.useMessageCommandPattern(message);
@@ -77,7 +79,7 @@ public class TCPConnections {
                                         thisConnect, nickName, nickName,
                                         "ERROR: Попытка отправить неизвестную команду: " + message
                                 );
-                    }
+                        }
                     }
                 }
             } catch (IOException e) {
@@ -86,7 +88,6 @@ public class TCPConnections {
                 connectionListener.isDisconnect(TCPConnections.this);
             }
         });
-        thrListener.start();
     }
 
 //    --------------------------------------------------------------------------
@@ -103,7 +104,6 @@ public class TCPConnections {
     }
 
     private void disconnect() {
-        thrListener.interrupt();
         try {
             socket.close();
         } catch (IOException e) {
@@ -130,11 +130,5 @@ public class TCPConnections {
                 "[%s] || ip: [%s] || port: [%s]",
                 nickName, socket.getInetAddress(), socket.getPort()
         );
-    }
-
-
-
-    public Socket getSocket() {
-        return socket;
     }
 }

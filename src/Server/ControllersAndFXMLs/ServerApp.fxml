@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.Tab?>
+<?import javafx.scene.control.TabPane?>
+<?import javafx.scene.control.TableColumn?>
+<?import javafx.scene.control.TableView?>
+<?import javafx.scene.control.TextArea?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.Pane?>
+
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Server.ControllersAndFXMLs.ServerApp">
+   <children>
+      <TabPane prefHeight="400.0" prefWidth="468.0" tabClosingPolicy="UNAVAILABLE">
+        <tabs>
+          <Tab text="ServerLog">
+            <content>
+              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="371.0" prefWidth="320.0">
+                     <children>
+                        <TextArea id="taChatLog" fx:id="taChatLog" prefHeight="372.0" prefWidth="468.0" text="hello" wrapText="true" />
+                     </children></AnchorPane>
+            </content>
+          </Tab>
+          <Tab text="Чат сервера">
+            <content>
+              <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <TextArea prefHeight="372.0" prefWidth="468.0" />
+                     </children></AnchorPane>
+            </content>
+          </Tab>
+            <Tab text="Чат клиента">
+              <content>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <TextArea fx:id="taServChatForClient" prefHeight="340.0" prefWidth="468.0" />
+                        <TextField fx:id="tfSendMessage" layoutX="139.0" layoutY="339.0" prefHeight="31.0" prefWidth="241.0" />
+                        <Button fx:id="buttonSendMsg" layoutX="380.0" layoutY="342.0" mnemonicParsing="false" onAction="#sendMessage" prefHeight="25.0" prefWidth="88.0" text="Отправить" textAlignment="CENTER" />
+                        <ComboBox layoutY="345.0" prefHeight="25.0" prefWidth="138.0" />
+                     </children>
+                  </AnchorPane>
+              </content>
+            </Tab>
+            <Tab text="Список пользователей">
+              <content>
+                <AnchorPane minHeight="0.0" minWidth="0.0" prefHeight="180.0" prefWidth="200.0">
+                     <children>
+                        <TableView prefHeight="372.0" prefWidth="468.0">
+                          <columns>
+                            <TableColumn prefWidth="75.0" text="C1" />
+                            <TableColumn prefWidth="75.0" text="C2" />
+                          </columns>
+                        </TableView>
+                     </children>
+                  </AnchorPane>
+              </content>
+            </Tab>
+        </tabs>
+      </TabPane>
+      <Pane layoutX="468.0" prefHeight="400.0" prefWidth="199.0">
+         <children>
+            <ListView layoutY="28.0" prefHeight="372.0" prefWidth="200.0" />
+            <Button layoutX="14.0" layoutY="2.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="88.0" text="Выгнать" />
+            <Button layoutX="133.0" layoutY="2.0" mnemonicParsing="false" text="Mute" />
+         </children>
+      </Pane>
+   </children>
+</AnchorPane>

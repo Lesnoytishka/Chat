@@ -15,10 +15,9 @@ import java.io.*;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalTime;
-import java.util.ArrayList;
+
 import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+
 
 public class ClientApplication extends Application {
 
@@ -86,16 +85,11 @@ public class ClientApplication extends Application {
             }
         }
 
-        List<String> messaged = getListMessage();
-        for(String str : messaged){
-            taChatLog.appendText(str + "\n");
-        }
-        taChatLog.appendText("\n");
+        getListMessage();
 
     }
 
-    private List<String> getListMessage(){
-        List<String> history = new ArrayList<>();
+    private void getListMessage(){
         try {
             RandomAccessFile raf = new RandomAccessFile(messageHistory, "r");
             int historyLength = 100;
@@ -129,8 +123,6 @@ public class ClientApplication extends Application {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        Collections.reverse(history);
-        return history;
     }
 
     private Scene setSceneComponent(){
@@ -252,7 +244,7 @@ public class ClientApplication extends Application {
                 try {
                     while (true) {
                         String message = in.readUTF();
-                        if (message.startsWith("/userList ")) {
+                        if (message.startsWith("/userList ;")) {
 
                             Platform.runLater(() -> {
                                 String[] strings;

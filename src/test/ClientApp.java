@@ -52,7 +52,7 @@ public class ClientApp extends Application implements TCPConnectionListener {
 
         primaryStage.show();
 
-        try {
+       /* try {
             connection = new TCPConnections(this, "localhost", 8888);
             socket = connection.getSocket();
             out = new DataOutputStream(socket.getOutputStream());
@@ -64,7 +64,7 @@ public class ClientApp extends Application implements TCPConnectionListener {
         } catch (IOException e) {
             taChatArea.appendText("Connected exception: " + e);
         }
-        startListenerThread();
+        startListenerThread();*/
     }
 
     private void startListenerThread(){
