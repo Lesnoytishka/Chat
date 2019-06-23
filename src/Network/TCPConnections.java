@@ -9,6 +9,7 @@ import java.util.concurrent.ExecutorService;
 public class TCPConnections {
 
     private String nickName;
+    private String login;
 
     private Socket socket;
     private TCPConnectionListener connectionListener;
@@ -52,7 +53,7 @@ public class TCPConnections {
 
                         switch (messageType) {
                             case "/hello":
-                                nickName = messageContent;
+                                nickName = AuthClients.getName(messageContent);
                                 connectionListener.isConnectionOnline(thisConnect);
                                 break;
 
@@ -130,5 +131,9 @@ public class TCPConnections {
                 "[%s] || ip: [%s] || port: [%s]",
                 nickName, socket.getInetAddress(), socket.getPort()
         );
+    }
+
+    public String getLogin() {
+        return login;
     }
 }

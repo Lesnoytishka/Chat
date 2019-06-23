@@ -3,6 +3,7 @@ package Network;
 import java.sql.*;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.SplittableRandom;
 
 public class AuthClients {
 
@@ -100,8 +101,38 @@ public class AuthClients {
         return pass != null && pass.equals(password);
     }
 
-    public String getNickName() {
+    public String getNickName(String login) {
+        try {
+            Class.forName("org.sqlite.JDBC");
+            try (Connection connection = DriverManager.getConnection("jdbc:sqlite:src\\UsersAuth.db")) {
+                Statement statement = connection.createStatement();
+                ResultSet resultSet = statement.executeQuery("select nickName from users where login = '" + login + "'");
+                nickName = resultSet.getString("nickName");
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
         return nickName;
+    }
+
+    public static String getName(String login) {
+        String nickName;
+        try {
+            Class.forName("org.sqlite.JDBC");
+            try (Connection connection = DriverManager.getConnection("jdbc:sqlite:src\\UsersAuth.db")) {
+                Statement statement = connection.createStatement();
+                ResultSet resultSet = statement.executeQuery("select nickName from users where login = '" + login + "'");
+                nickName = resultSet.getString("nickName");
+                return nickName;
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+        return "123";
     }
 
     public boolean changeNickName(String oldNickName, String newNickName){

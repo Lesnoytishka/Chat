@@ -2,6 +2,7 @@ package Server;
 
 import Network.TCPConnectionListener;
 import Network.TCPConnections;
+import Network.User;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -18,7 +19,7 @@ public class Server implements TCPConnectionListener {
 
     private ExecutorService executorService;
     private List<TCPConnections> realConnections = Collections.synchronizedList(new ArrayList<>());
-    private Map<String, TCPConnections> activeConnections = Collections.synchronizedMap(new HashMap<>());
+    private Map<String, User> activeConnections = Collections.synchronizedMap(new HashMap<>());
 
     public Server(int port) {
         try (ServerSocket serverSocket = new ServerSocket(port)) {
@@ -26,13 +27,11 @@ public class Server implements TCPConnectionListener {
             System.out.println("Server ready...");
 
             executorService.execute(this::mailingUsers);
-//                executorService.execute(this::sendSystemMessage);
 
             while (true) {
                 try {
                     TCPConnections realConnect = new TCPConnections(this, serverSocket.accept(), executorService);
                     realConnections.add(realConnect);
-//                    System.out.println("new connection is access " + realConnect);
                 } catch (IOException e) {
                     e.printStackTrace();
                 }
@@ -50,8 +49,8 @@ public class Server implements TCPConnectionListener {
         if (!value.startsWith("/userList")) {
             System.out.println(value);
         }
-        for (Map.Entry<String, TCPConnections> connections : activeConnections.entrySet()) {
-            connections.getValue().sendMessage(value);
+        for (Map.Entry<String , User> connections : activeConnections.entrySet()) {
+            connections.getValue().getTcpConnections().sendMessage(value);
         }
     }
 
@@ -59,20 +58,17 @@ public class Server implements TCPConnectionListener {
 
         if (!(from == null || toUser == null || message.equals(""))) {
 
-            activeConnections.get(toUser).sendMessage(String.format("[%s]--> %s", from, message));
-            activeConnections.get(from).sendMessage(String.format("<--[%s] %s", toUser, message));
+            activeConnections.get(toUser).getTcpConnections().sendMessage(String.format("[%s]--> %s", from, message));
+            activeConnections.get(from).getTcpConnections().sendMessage(String.format("<--[%s] %s", toUser, message));
             System.out.println(String.format("[%s]-->[%s] : %s", from, toUser, message));
 
         } else {
 
             System.err.println(String.format("[%s]-->[%s] : %s", from, toUser, message));
-            activeConnections.get(from).sendMessage(String.format("<--[%s] %s", toUser,
+            activeConnections.get(from).getTcpConnections().sendMessage(String.format("<--[%s] %s", toUser,
                     "не удалось отправить сообщение: возможно данный получатель вышел")
-
-
             );
         }
-
     }
 
     private void mailingUsers() {
@@ -84,8 +80,8 @@ public class Server implements TCPConnectionListener {
                     e.printStackTrace();
                 }
                 StringBuilder connectionsList = new StringBuilder("/userList ");
-                for (Map.Entry<String, TCPConnections> entry : activeConnections.entrySet()) {
-                    connectionsList.append(";").append(entry.getKey());
+                for (Map.Entry<String, User> entry : activeConnections.entrySet()) {
+                    connectionsList.append(";").append(entry.getValue().getNickName());
                 }
                 sendMessageToAllConnections(connectionsList.toString());
             }
@@ -124,7 +120,8 @@ public class Server implements TCPConnectionListener {
 
     @Override
     public void isConnectionOnline(TCPConnections connection) {
-        activeConnections.put(connection.getNickName(), connection);
+        User user = new User(connection.getNickName(), connection);
+        activeConnections.put(connection.getNickName(), user);
         System.out.println("Client is online: " + connection.toString());
         sendMessageToAllConnections("Client connected: " + connection.getNickName());
     }
@@ -148,7 +145,6 @@ public class Server implements TCPConnectionListener {
 
     @Override
     public void changeName(TCPConnections connections, String oldNickName, String newNickName) {
-        activeConnections.put(newNickName, connections);
-        activeConnections.remove(oldNickName);
+        activeConnections.get(oldNickName).setNickName(newNickName);
     }
 }

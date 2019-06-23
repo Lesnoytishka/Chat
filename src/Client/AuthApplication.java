@@ -47,7 +47,7 @@ public class AuthApplication extends Application {
     public void runClientApplication() {
         if (authSetup.authUser(tfLogin.getText(), pfPassword.getText())) {
 
-            ClientApplication clientApp = new ClientApplication(authSetup.getNickName(), tfIP.getText(), Integer.valueOf(tfPort.getText()));
+            ClientApplication clientApp = new ClientApplication(tfLogin.getText(), authSetup.getNickName(tfLogin.getText()), tfIP.getText(), Integer.valueOf(tfPort.getText()));
             Stage stage = new Stage();
             clientApp.start(stage);
 

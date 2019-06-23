@@ -23,6 +23,7 @@ public class ClientApplication extends Application {
 
     private Socket socket;
     private String nickName;
+    private String login;
     private String ip_address;
     private int port;
 
@@ -41,7 +42,8 @@ public class ClientApplication extends Application {
 
     private File messageHistory;
 
-    public ClientApplication(String nickName, String ip_address, int port) {
+    public ClientApplication(String login, String nickName, String ip_address, int port) {
+        this.login = login;
         this.nickName = nickName;
         this.ip_address = ip_address;
         this.port = port;
@@ -130,7 +132,7 @@ public class ClientApplication extends Application {
             socket = new Socket(ip_address, port);
             in = new DataInputStream(socket.getInputStream());
             out = new DataOutputStream(socket.getOutputStream());
-            out.writeUTF("/hello " + nickName);
+            out.writeUTF("/hello " + login);
             out.flush();
             stage.setTitle(String.format("Чат. [%s]", nickName));
             receiveMessage();
@@ -188,23 +190,20 @@ public class ClientApplication extends Application {
         miClearChatArea.setOnAction(event -> taChatLog.clear());
 
 
-        miChangeNickName.setOnAction(event -> {
-            RenamedWindow renamedWindow = new RenamedWindow(this, nickName);
-//            closeApp();
-
-
-
-//              todo реализовать изменение ника без дисконекта
-            stage.setTitle(String.format("Чат. [%s]", nickName));
-            try {
-                out.writeUTF("/setName " + nickName);
-                out.flush();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-
-        });
+//        miChangeNickName.setOnAction(event -> {
+//            RenamedWindow renamedWindow = new RenamedWindow(this, nickName);
+////            closeApp();
+//
+////              todo реализовать изменение ника без дисконекта
+//            stage.setTitle(String.format("Чат. [%s]", nickName));
+//            try {
+//                out.writeUTF("/setName " + nickName);
+//                out.flush();
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            }
+//
+//        });
 
         return new MenuBar(menu, help);
     }

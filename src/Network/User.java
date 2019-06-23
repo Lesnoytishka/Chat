@@ -6,6 +6,7 @@ public class User {
     private String login;
     private String password;
     private String nickName;
+    private TCPConnections tcpConnections;
 
     public User(int id, String login, String password, String nickName) {
         this.id = id;
@@ -13,6 +14,13 @@ public class User {
         this.password = password;
         this.nickName = nickName;
     }
+
+    public User(String nickName, TCPConnections tcpConnections){
+        this.nickName = nickName;
+        this.tcpConnections = tcpConnections;
+    }
+
+    //    ---------------------------------------------------------------------------------------------------------
 
     public int getId() {
         return id;
@@ -22,6 +30,8 @@ public class User {
         return login;
     }
 
+    //    ---------------------------------------------------------------------------------------------------------
+
     public void setPassword(String password) {
         this.password = password;
     }
@@ -29,6 +39,8 @@ public class User {
     public String getPassword() {
         return password;
     }
+
+    //    ---------------------------------------------------------------------------------------------------------
 
     public void setNickName(String nickName) {
         this.nickName = nickName;
@@ -38,4 +50,13 @@ public class User {
         return nickName;
     }
 
+    //    ---------------------------------------------------------------------------------------------------------
+
+    public TCPConnections getTcpConnections() {
+        return tcpConnections;
+    }
+
+    public void setTcpConnections(TCPConnections tcpConnections) {
+        this.tcpConnections = tcpConnections;
+    }
 }
